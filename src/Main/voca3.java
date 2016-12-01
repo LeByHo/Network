@@ -83,13 +83,14 @@ public class voca3 extends JFrame {
 		panel.add(word);
 		
 		Wordmean mean = new Wordmean();
+		String[] m = mean.getmean(); 
 	      new Thread(mean).start();
 	      panel.add(mean);
 		
 		char[][] word2=word.getword();
 		
 		
-		Button3 button = new Button3(word2,word,panel);
+		Button3 button = new Button3(word2,word,panel,m);
 		new Thread(button).start();
 		panel.add(button);
 		
@@ -117,6 +118,7 @@ class Button3 extends JPanel implements Runnable{
 	int an=0;
 	int[] bt = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	int Score=0;
+	String[] mean;
 	wword word;
 	char[][] word2;
 	char[][] rest;
@@ -151,10 +153,11 @@ class Button3 extends JPanel implements Runnable{
 	Font f2 = new Font("±Ã¼­", Font.BOLD, 20);
 	Sco score2 = new Sco(280,250,f2,Score);
 
-	Button3(char[][] word2,wword word,JPanel panel){
+	Button3(char[][] word2,wword word,JPanel panel, String[] m){
 		setBounds(90,617,910,300);
 		setLayout(null);
 		setOpaque(false);
+		mean=m;
 		this.word2=word2;
 		this.word=word;
 		Check2=word.check();
@@ -202,7 +205,7 @@ class Button3 extends JPanel implements Runnable{
 				Object obj = arg0.getSource();
 				if((JButton)obj == btn1){
 					bt[0]++;
-					System.out.println(bt[0]);
+			
 					if(bt[0]%2==1){
 						btn1.setBackground(Color.CYAN);
 						char a=btn1.getText().charAt(0);
@@ -266,7 +269,7 @@ class Button3 extends JPanel implements Runnable{
 				Object obj = arg0.getSource();
 				if((JButton)obj == btn2){
 					bt[1]++;
-					System.out.println(bt[1]);
+				
 					if(bt[1]%2==1){
 						btn2.setBackground(Color.CYAN);
 						char a=btn2.getText().charAt(0);
@@ -1899,7 +1902,7 @@ class Button3 extends JPanel implements Runnable{
 		} catch (Exception ex) {
 		}		
 	}
-	new Last(word);	
+	new Last(word,mean);	
 	}
 	
 }

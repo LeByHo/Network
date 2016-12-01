@@ -29,7 +29,7 @@ class wword extends JLabel implements Runnable {
     static int catego,wlevel;
 	wword(){
 		try {
-			String str = Client.getword();
+			String str = Client.getword(catego);
 			String[] wo = str.split(" ");
 			String[] wo1= str.split(" ");
 			wd=wo;

@@ -16,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.JOptionPane;
 
 import Client.Client;
@@ -27,6 +28,8 @@ import java.awt.Dimension;
 import javax.swing.UIManager;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
@@ -43,8 +46,8 @@ public class Chattroom extends JFrame {
 	
 	public Chattroom(DTO dto) {
 	
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		addWindowListener(new MyListener(this));
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		//addWindowListener(new MyListener(this));
 		name = dto.getName();
 		age = dto.getAge();
 		id = dto.getId();
@@ -84,6 +87,7 @@ public class Chattroom extends JFrame {
 		});
 		btnNewButton.setBounds(489, 710, 97, 40);
 		panel.add(btnNewButton);
+		
 		// visiible
 		setVisible(true);
 	}
@@ -188,16 +192,9 @@ public class Chattroom extends JFrame {
 		client4.add(user4);
 		client4.setBounds(850, 550, 200, 250);
 		panel.add(client4);
-
-		JTextArea message = new JTextArea();
-		message.setBounds(280,120,530,500);
-		message.setEditable(false);
-		message.setBackground(Color.WHITE);
-		panel.add(message);
-
-		JTextField userText = new JTextField();
-		userText.setBounds(280, 650, 530, 50);
-		panel.add(userText); 
+		chatt ch = new chatt();
+		new Thread(ch).start();
+		panel.add(ch);
 	}
 	public static int getRoomnum() {
 		return roomnum;
@@ -205,58 +202,55 @@ public class Chattroom extends JFrame {
 	public static void setRoomnum(int roomnum) {
 		Chattroom.roomnum = roomnum;
 	}
-
 }
-class MyListener implements WindowListener{
-	private Chattroom f;
-	MyListener(Chattroom f){
-		this.f=f;
-	}
-	@Override
-	public void windowActivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+class chatt extends JPanel implements Runnable{
+	JTextField userText;
+	JTextArea message;
+	chatt(){
+		setBounds(270, 107, 553, 603);
+		setLayout(null);
+		setOpaque(false);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(12,10,530,500);
+		this.add(scrollPane);
+		message = new JTextArea();
+		scrollPane.setViewportView(message);
+		message.setEditable(false);
 
-	@Override
-	public void windowClosed(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+		userText = new JTextField();
+		userText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					Client.out.println(userText.getText());
+					userText.setText("");
+				}
+			}
 
-	@Override
-	public void windowClosing(WindowEvent arg0) {
-		int choice = JOptionPane.showConfirmDialog(f,"Á¤¸»?","Confirmation",JOptionPane.YES_NO_OPTION);
-		if(choice==0){
+		});
+		userText.setBounds(12, 532, 530, 50);
+		this.add(userText); 
+	}
+	public void run() {
+		while(true){
+			String line;
 			try {
-				Client.DeletetRoom("room"+f.getRoomnum());
-				f.dispose();	
+				line = Client.in.readLine();
+				System.out.println("line"+" "+line);
+				if (line.startsWith("SUBMITNAME")) 
+					Client.out.println(Chattroom.name);
+				else if (line.startsWith("NAMEACCEPTED")) 
+					userText.setEditable(true);
+
+				else if (line.startsWith("MESSAGE")) {
+					if(line.length()>16){
+						message.append(line.substring(8) + "\n");
+					}
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-	@Override
-	public void windowDeactivated(WindowEvent arg0) {
-	
-	}
-	@Override
-	public void windowDeiconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowIconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowOpened(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

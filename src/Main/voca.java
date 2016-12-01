@@ -81,13 +81,15 @@ public class voca extends JFrame {
 		new Thread(word).start();
 		panel.add(word);
 		char[][] word2=word.getword();
+		
 
 		Wordmean mean = new Wordmean();
+		String[] m = mean.getmean(); 
 		new Thread(mean).start();
 		panel.add(mean);
 
 
-		Button button = new Button(word2,word,panel);
+		Button button = new Button(word2,word,panel,m);
 		button.setSize(800, 300);
 		new Thread(button).start();
 		panel.add(button);
@@ -127,6 +129,7 @@ class Button extends JPanel implements Runnable{
 	int Score=0;
 	int[] Check; 
 	wword word;
+	String[] mean;
 	char[][] word2;
 	String[] w;
 	bt btn1;
@@ -137,12 +140,13 @@ class Button extends JPanel implements Runnable{
 	Font f2 = new Font("±Ã¼­", Font.BOLD, 20);
 	Sco score2 = new Sco(280,250,f2,Score);
 
-	Button(char[][] word2,wword word,JPanel panel){
+	Button(char[][] word2,wword word,JPanel panel, String[] m){
 		setBounds(200,617,800,40);
 		setLayout(null);
 		setOpaque(false);
 		this.word2=word2;
 		this.word=word;
+		mean=m;
 		w=word.get();
 		btn1 =new bt(50,20,125,50,word2[0][0]);
 		btn2 = new bt(220,20,125,50,word2[0][1]);
@@ -353,6 +357,6 @@ class Button extends JPanel implements Runnable{
 			} catch (Exception ex) {
 			} 
 		}
-    new Last(word);
+		new Last(word,mean);
 	}
 }

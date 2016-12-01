@@ -19,12 +19,14 @@ import javax.swing.border.EmptyBorder;
 import Client.Client;
 import Client.DTO;
 import Main.Room;
-import Main.qweqwe;
 
 import java.awt.Color;
 import javax.swing.UIManager;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.awt.event.ActionEvent;
 
 public class Login extends JFrame {
@@ -148,7 +150,7 @@ public class Login extends JFrame {
 								}
 								else{
 									new Room(dto);
-									//new qweqwe(dto);
+									//new asdasd(dto);
 									dispose();
 								}
 							}

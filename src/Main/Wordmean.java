@@ -12,11 +12,11 @@ import Client.Client;
 
 class Wordmean extends JLabel implements Runnable {
    String[] mean = new String[10];
-
+   static int cate,levels;
 
    Wordmean() {
 	   try {
-		String str = Client.getmean();
+		String str = Client.getmean(cate);
 		String[] wo = str.split(" ");
 		mean = wo;
 	} catch (IOException e) {
@@ -30,7 +30,9 @@ class Wordmean extends JLabel implements Runnable {
       setBackground(new Color(255,255,255,100));
       setOpaque(true);
    }
-
+   public String[] getmean() {
+		return mean;
+	}
    public void run() {
 	 int k=0;
       while (k < 10) {

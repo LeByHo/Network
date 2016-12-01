@@ -28,6 +28,8 @@ import java.awt.Dimension;
 import javax.swing.UIManager;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
@@ -36,6 +38,7 @@ import java.util.TimerTask;
 import java.awt.event.ActionEvent;
 import javax.swing.JSplitPane;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
 public class Room extends JFrame {
 	private JPanel contentPane;
@@ -75,6 +78,13 @@ public class Room extends JFrame {
 		placeLoginPanel(panel_1);
 		// add
 		getContentPane().add(panel_1);
+		number a = new number(dto);
+		new Thread(a).start();
+		panel_1.add(a);
+		chat ch = new chat();
+		ch.setLocation(20, 530);
+		new Thread(ch).start();
+		panel_1.add(ch);
 		// visiible
 		setVisible(true);
 	}
@@ -86,13 +96,9 @@ public class Room extends JFrame {
 		dto.setPassword(password);
 		dto.setCome(come);
 		panel.setLayout(null);
-		// Dimension dim = new Dimension(700,700);
 		Color color = new Color(255, 0, 0);
 
 		ImageIcon icon = new ImageIcon("a.jpg");
-		number a = new number(dto);
-		new Thread(a).start();
-		panel.add(a);
 
 		JPanel info = new JPanel();
 		info.setLayout(null);
@@ -149,7 +155,7 @@ public class Room extends JFrame {
 				}
 			}
 		});
-		btn.setBounds(780, 630, 250, 95);
+		btn.setBounds(780, 540, 250, 95);
 		panel.add(btn);
 
 		JButton btn2 = new JButton("MY BOOK");
@@ -157,31 +163,12 @@ public class Room extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				Object obj = arg0.getSource();
 				if ((JButton) obj == btn2) {
-					Mybook frame = new Mybook();
+					new Mybook();
 				}
 			}
 		});
-		btn2.setBounds(780, 725, 250, 95);
+		btn2.setBounds(780, 645, 250, 95);
 		panel.add(btn2);
-
-		JButton left = new JButton(new ImageIcon("d.jpg"));
-		left.setBounds(380, 570, 50, 50);
-		panel.add(left);
-		JButton right = new JButton(new ImageIcon("e.jpg"));
-		right.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		right.setBounds(280, 570, 50, 50);
-		panel.add(right);
-
-		JScrollPane scrollPane = new JScrollPane(); // 胶农费 备泅
-		scrollPane.setBounds(20, 630, 700, 140);
-		panel_1.add(scrollPane);
-
-		JTextArea message = new JTextArea();
-		scrollPane.setViewportView(message);
-		message.setBackground(Color.CYAN);
 
 		JTextField userText = new JTextField();
 		userText.setBounds(20, 770, 702, 50);
@@ -501,7 +488,6 @@ class number extends JPanel implements Runnable {
 			try {
 				str = Client.GetRoomCount();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			arr = str.split(" ");
@@ -566,6 +552,68 @@ class Split extends JSplitPane {
 		setRightComponent(btn);
 	}
 
+}
+class chat extends JPanel implements Runnable{
+	JTextField textField;
+	JTextArea textArea;
+	chat(){
+		setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "措 扁 规", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		setBounds(47, 554, 667, 245);
+		setLayout(null);
+		setOpaque(false);
+		JPanel panel_4 = new JPanel();
+		panel_4.setBounds(12, 200, 643, 24);
+		panel_4.setLayout(null);
+		this.add(panel_4);
+		JButton btnNewButton_2 = new JButton("New button");
+		btnNewButton_2.setBounds(539, 0, 104, 25);
+		panel_4.add(btnNewButton_2);
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(12, 21, 643, 169);
+		this.add(scrollPane_1);
+		textArea = new JTextArea();
+
+		textArea.setEditable(false);
+		scrollPane_1.setViewportView(textArea);
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(0, 0, 546, 25);
+		panel_4.add(scrollPane_2);
+		textField = new JTextField();
+		textField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					Client.out.println(textField.getText());
+					textField.setText("");
+				}
+			}
+
+		});
+		textField.setBounds(0, 1, 567, 22);
+		scrollPane_2.setViewportView(textField);
+		textField.setColumns(10);
+	}
+	public void run() {
+		while(true){
+			String line;
+			try {
+				line = Client.in.readLine();
+				if (line.startsWith("SUBMITNAME")) 
+					Client.out.println(Room.name);
+				else if (line.startsWith("NAMEACCEPTED")) 
+					textField.setEditable(true);
+
+				else if (line.startsWith("MESSAGE")) {
+					if(line.length()>16){
+						textArea.append(line.substring(8) + "\n");
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 }
 
 class MyListene implements WindowListener {

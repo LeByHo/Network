@@ -19,11 +19,9 @@ import javax.swing.JOptionPane;
 
 
 public class Server {
-	private static ArrayList<String> names = new ArrayList<String>();
-	private static ArrayList<DataOutputStream> writers = new ArrayList<DataOutputStream>();
-
+	String[] category ={"economy", "traffic","business","shopping","travel"};
 	private static final int PORT = 9001;
-
+	int check=0;
 	public static void main(String[] args) throws Exception {
 		Server ser = new Server();
 		ser.connect();
@@ -51,16 +49,17 @@ public class Server {
 	}
 
 	class ServerThread extends Thread {
-
 		Socket socket = null;
 		BufferedReader inFromclient = null;
 		DataOutputStream outToClient = null;
 		String name;
+		PrintWriter out =null;
 		public ServerThread(Socket soc) {
 			socket = soc;
 			try {
 				inFromclient = new BufferedReader(new InputStreamReader(socket.getInputStream() ) );
 				outToClient = new DataOutputStream(socket.getOutputStream());
+				out = new PrintWriter(socket.getOutputStream(), true);
 			}
 			catch (IOException e){
 				e.printStackTrace();
@@ -71,13 +70,11 @@ public class Server {
 			try {
 				while(true){
 					String packet = inFromclient.readLine();
+					//System.out.println("packet"+" "+packet);
 					if(packet!=null){
-						if(packet.startsWith("chat")){
-							String[] tep = packet.split(" ");
-							chatting(tep[1]);
-						}
-						else
+						if(packet.startsWith("ID")||packet.startsWith("JOIN")||packet.startsWith("FIND")||packet.startsWith("Room")||packet.startsWith("word")){
 							outToClient.writeBytes(check(packet)+'\n');
+						}
 					}
 					else
 						return;
@@ -108,7 +105,8 @@ public class Server {
 			}
 
 			try {
-				String jdbcUrl = "jdbc:mysql://localhost/member";//사용하는 데이터베이스명을 포함한 url
+
+				String jdbcUrl = "jdbc:mysql://localhost/member?useUnicode=true&characterEncoding=utf8";//사용하는 데이터베이스명을 포함한 url
 				String userId = "root";//사용자계정
 				String userPass = "12345";//사용자 패스워드
 
@@ -163,7 +161,7 @@ public class Server {
 				}
 				else if(arr[0].equals("word")){
 					if(arr[1].equals("word")){
-						rs = stmt.executeQuery("select word from economy");
+						rs = stmt.executeQuery("select word from " + category[ Integer.parseInt(arr[2])] + "");
 						if(rs.next()!=false){
 							result = rs.getString("word")+" ";
 							while(rs.next()){
@@ -172,7 +170,7 @@ public class Server {
 						}
 					}
 					else{
-						rs = stmt.executeQuery("select mean from economy");
+						rs = stmt.executeQuery("select mean from " + category[ Integer.parseInt(arr[2])] + "");
 						if(rs.next()!=false){
 							result = rs.getString("mean")+" ";
 							while(rs.next()){
@@ -180,14 +178,13 @@ public class Server {
 							}
 						}
 					}
-					return result;
 				}
 				else{
 					if(arr.length==1){
 						rs = stmt.executeQuery("select * from room where room ='" + 0 + "' ");
 						if(rs.next()!=false)
 							result = rs.getString("room1")+" "+rs.getString("room2")+" "+rs.getString("room3")+" "+rs.getString("room4")
-							+" "+rs.getString("room5")+" "+rs.getString("room6")+" "+rs.getString("room7")+" "+rs.getString("room8")+" "+rs.getString("room9");		
+							+" "+rs.getString("room5")+" "+rs.getString("room6")+" "+rs.getString("room7")+" "+rs.getString("room8")+" "+rs.getString("room9");								
 					}
 					else{
 						if(arr[1].equals("In"))
@@ -199,77 +196,8 @@ public class Server {
 			}catch(SQLException e) {
 				System.out.println("SQLException: " + e.getMessage());
 			}
+			//System.out.println("result"+" "+result);
 			return result;
-		}
-		public void chatting(String str) throws IOException {
-			try{
-				System.out.println("str1"+" "+str);
-				while (true) {
-					outToClient.writeBytes("SUBMITNAME"+'\n');
-					name = str;
-					System.out.println("str2"+" "+name);
-					if (name == null) {
-						return;
-					}
-					synchronized (names) {
-						if (!names.contains(name)) {
-							names.add(name);
-							break;
-						}
-					}
-				}
-
-				//boardcast message that new client log in
-				outToClient.writeBytes("NAMEACCEPTED"+'\n');
-				writers.add(outToClient);
-				for (DataOutputStream writer : writers) 
-					writer.writeBytes("MESSAGE " + "  =>>" +name + " is log-in."+'\n');
-
-				// if equal fomat that /w name, whisper cilent
-				while (true) {
-					String input = str;
-					System.out.println("str3"+" "+input);
-					if (input == null) {
-						return;
-					}
-					String arr[] = input.split(" ");
-					System.out.println("str4"+" "+arr[0]);
-					String message = "";
-
-					for(int a = 2; a < arr.length; a++) {
-						message += arr[a] + " ";
-					}
-					if (arr[0].equals("/w") || arr[0].equals("/W")) {
-						for (int i = 0; i < writers.size(); i++) {
-							if(arr[1].equals(names.get(i))||(name.equals(names.get(i)))) { 
-								writers.get(i).writeBytes("MESSAGE " + "  W) " + name + ": " + message+'\n');
-							}
-						}
-					}
-					else {
-						for (DataOutputStream writer : writers) {
-							writer.writeBytes("MESSAGE " + " ["+name + "] " + input+'\n');
-						}
-					}
-				}
-			} 
-			catch (IOException e) {
-				System.out.println(e);
-			}
-			//client exit chatting room print other cilent log-out massage
-			finally  {
-				String temp = null;
-				if (name != null) {
-					temp = name;
-					names.remove(name);
-				}
-				if (outToClient != null) {
-					writers.remove(outToClient);
-					for (DataOutputStream writer : writers) {
-						writer.writeBytes("MESSAGE " + "  =>>" +temp + " is log-out."+'\n');
-					}
-				}
-			}
 		}
 	}
 }

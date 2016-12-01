@@ -83,13 +83,14 @@ public class voca2 extends JFrame {
       panel.add(word);
       
       Wordmean mean = new Wordmean();
+  	String[] m = mean.getmean(); 
       new Thread(mean).start();
       panel.add(mean);
       
       char[][] word2=word.getword();
       char[][] rest = word.getanotehr();
       
-      Button2 button = new Button2(word2,word,panel,rest);
+      Button2 button = new Button2(word2,word,panel,rest,m);
       new Thread(button).start();
       panel.add(button);
       
@@ -223,7 +224,7 @@ class bt extends JButton implements Runnable {
       this.a=a;
       s=a+"";
       setText(s);
-      setVisible(true);
+      setVisible(true); 
    }
    public void set(){
       setVisible(true);
@@ -252,6 +253,7 @@ class Button2 extends JPanel implements Runnable{
    int bt8=0;
    int Score=0;
    wword word;
+   String[] mean;
    char[][] word2;
    char[][] rest;
    bt btn1;
@@ -267,10 +269,11 @@ class Button2 extends JPanel implements Runnable{
    Font f2 = new Font("±Ã¼­", Font.BOLD, 20);
    Sco score2 = new Sco(280,250,f2,Score);
 
-   Button2(char[][] word2,wword word,JPanel panel,char[][] rest){
+   Button2(char[][] word2,wword word,JPanel panel,char[][] rest,String[] m){
       setBounds(100,617,880,300);
       setLayout(null);
       setOpaque(false);
+      mean=m;
       this.word2=word2;
       this.word=word;
       this.rest=rest;
@@ -306,7 +309,7 @@ class Button2 extends JPanel implements Runnable{
             Object obj = arg0.getSource();
             if((JButton)obj == btn1){
                bt1++;
-               System.out.println(bt1);
+               
                if(bt1%2==1){
                   btn1.setBackground(Color.CYAN);
                   char a=btn1.getText().charAt(0);
@@ -357,7 +360,7 @@ class Button2 extends JPanel implements Runnable{
             Object obj = arg0.getSource();
             if((JButton)obj == btn2){
                bt2++;
-               System.out.println(bt1);
+              
                if(bt2%2==1){
                   btn2.setBackground(Color.CYAN);
                   char a=btn2.getText().charAt(0);
@@ -729,6 +732,6 @@ class Button2 extends JPanel implements Runnable{
       } catch (Exception ex) {
       }
     }
-  	new Last(word);	
+  	new Last(word,mean);	
    }
 }
