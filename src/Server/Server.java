@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 
 public class Server {
 	String[] category ={"economy", "traffic","business","shopping","travel"};
+	private static ArrayList<String> room1 = new ArrayList<String>();
 	private static final int PORT = 9001;
 	int check=0;
 	public static void main(String[] args) throws Exception {
@@ -70,9 +71,9 @@ public class Server {
 			try {
 				while(true){
 					String packet = inFromclient.readLine();
-					//System.out.println("packet"+" "+packet);
 					if(packet!=null){
-						if(packet.startsWith("ID")||packet.startsWith("JOIN")||packet.startsWith("FIND")||packet.startsWith("Room")||packet.startsWith("word")){
+						if(packet.startsWith("ID")||packet.startsWith("JOIN")||packet.startsWith("FIND")||packet.startsWith("Room")||packet.startsWith("word")||packet.startsWith("Insert")
+								||packet.startsWith("Bring")){
 							outToClient.writeBytes(check(packet)+'\n');
 						}
 					}
@@ -179,6 +180,15 @@ public class Server {
 						}
 					}
 				}
+				else if(arr[0].equals("Insert")){
+					room1.add(arr[1]);
+				}
+				else if(arr[0].equals("Bring")){
+					result +="";
+					for(String str : room1){
+						result += str+" ";
+					}
+				}
 				else{
 					if(arr.length==1){
 						rs = stmt.executeQuery("select * from room where room ='" + 0 + "' ");
@@ -196,7 +206,6 @@ public class Server {
 			}catch(SQLException e) {
 				System.out.println("SQLException: " + e.getMessage());
 			}
-			//System.out.println("result"+" "+result);
 			return result;
 		}
 	}

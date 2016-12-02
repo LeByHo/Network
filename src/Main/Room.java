@@ -50,7 +50,7 @@ public class Room extends JFrame {
 	static int come;
 	private JPanel panel_1;
 	String str;
-
+	static boolean flag = false;
 	public Room(DTO dto) throws IOException {
 		name = dto.getName();
 		age = dto.getAge();
@@ -169,10 +169,6 @@ public class Room extends JFrame {
 		});
 		btn2.setBounds(780, 645, 250, 95);
 		panel.add(btn2);
-
-		JTextField userText = new JTextField();
-		userText.setBounds(20, 770, 702, 50);
-		panel.add(userText);
 	}
 
 	void action(JButton btn) {
@@ -522,6 +518,7 @@ class Split extends JSplitPane {
 				if ((JButton) obj == btn) {
 					try {
 						if (i == 1) {
+							Client.Insertname(Room.name+"."+Room.come);
 							Client.InsertRoom("room1");
 						} else if (i == 2) {
 							Client.InsertRoom("room2");
@@ -540,6 +537,7 @@ class Split extends JSplitPane {
 						} else if (i == 9) {
 							Client.InsertRoom("room9");
 						}
+						Room.flag = true;
 						Chattroom chat = new Chattroom(dto);
 						chat.setRoomnum(i);
 					} catch (IOException e) {
@@ -587,14 +585,13 @@ class chat extends JPanel implements Runnable{
 					textField.setText("");
 				}
 			}
-
 		});
 		textField.setBounds(0, 1, 567, 22);
 		scrollPane_2.setViewportView(textField);
 		textField.setColumns(10);
 	}
 	public void run() {
-		while(true){
+		while(!Room.flag){
 			String line;
 			try {
 				line = Client.in.readLine();
@@ -602,7 +599,6 @@ class chat extends JPanel implements Runnable{
 					Client.out.println(Room.name);
 				else if (line.startsWith("NAMEACCEPTED")) 
 					textField.setEditable(true);
-
 				else if (line.startsWith("MESSAGE")) {
 					if(line.length()>16){
 						textArea.append(line.substring(8) + "\n");
@@ -626,15 +622,11 @@ class MyListene implements WindowListener {
 	@Override
 	public void windowActivated(WindowEvent arg0) {
 		// TODO Auto-generated method stub
-
 	}
-
 	@Override
 	public void windowClosed(WindowEvent arg0) {
 		// TODO Auto-generated method stub
-
 	}
-
 	@Override
 	public void windowClosing(WindowEvent arg0) {
 		int choice = JOptionPane.showConfirmDialog(f, "Á¾·á?", "Log Out", JOptionPane.YES_NO_OPTION);

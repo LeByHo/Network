@@ -72,8 +72,10 @@ public class Make extends JFrame{
 				Object obj = e.getSource();
 				if((JButton)obj == join){
 						try {
-							Chattroom chat = new Chattroom(dto);
+							Room.flag = true;
+							Client.Insertname(name+"."+come);
 							Client.InsertRoom("room"+room);
+							Chattroom chat = new Chattroom(dto);
 							chat.setRoomnum(room);
 							dispose();
 						} catch (IOException e1) {

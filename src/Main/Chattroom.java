@@ -43,11 +43,10 @@ public class Chattroom extends JFrame {
 	static int come;
 	static int roomnum;
 
-	
 	public Chattroom(DTO dto) {
-	
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		//addWindowListener(new MyListener(this));
+		setUndecorated(true);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		//addWindowListener(new MyListenell(this));
 		name = dto.getName();
 		age = dto.getAge();
 		id = dto.getId();
@@ -92,6 +91,11 @@ public class Chattroom extends JFrame {
 		setVisible(true);
 	}
 	public void placeLoginPanel(JPanel panel){
+		try {
+			System.out.println("¿©±â"+" "+Client.Bringname());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		panel.setLayout(null);
 		Color color = new Color(255,0,0);
 		ImageIcon icon = null;
@@ -236,7 +240,6 @@ class chatt extends JPanel implements Runnable{
 			String line;
 			try {
 				line = Client.in.readLine();
-				System.out.println("line"+" "+line);
 				if (line.startsWith("SUBMITNAME")) 
 					Client.out.println(Chattroom.name);
 				else if (line.startsWith("NAMEACCEPTED")) 
@@ -248,7 +251,6 @@ class chatt extends JPanel implements Runnable{
 					}
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

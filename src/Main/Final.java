@@ -142,7 +142,6 @@ class exam extends JPanel{
          j = 0;
            
          while (j < i) {
-            System.out.println(j+" "+temp[j]+" "+r);
             if (temp2[j] == r) {
                r = rand1.nextInt(4);
                j = 0;

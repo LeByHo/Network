@@ -122,6 +122,7 @@ public class Client {
 		outToServer = new DataOutputStream(Socket.getOutputStream());
 		outToServer.writeBytes(str+'\n');
 	}
+
 	public static String GetRoomCount() throws IOException{
 		outToServer = new DataOutputStream(Socket.getOutputStream());
 		outToServer.writeBytes("Room"+'\n');
@@ -129,12 +130,29 @@ public class Client {
 		String answer = inFromServer.readLine();
 		return answer;
 	}
+
+	public static void Insertname(String str) throws IOException{
+		outToServer = new DataOutputStream(Socket.getOutputStream());
+		outToServer.writeBytes("Insert"+" "+str+'\n');
+		inFromServer = new BufferedReader(new InputStreamReader(Socket.getInputStream()));
+		String answer = inFromServer.readLine();
+	}
+	
+	public static String Bringname() throws IOException{
+		outToServer = new DataOutputStream(Socket.getOutputStream());
+		outToServer.writeBytes("Bring"+'\n');
+		inFromServer = new BufferedReader(new InputStreamReader(Socket.getInputStream()));
+		String answer = inFromServer.readLine();
+		return answer;
+	}
+	
 	public static void InsertRoom(String str) throws IOException{
 		outToServer = new DataOutputStream(Socket.getOutputStream());
 		outToServer.writeBytes("Room"+" "+"In"+" "+str+'\n');
 		inFromServer = new BufferedReader(new InputStreamReader(Socket.getInputStream()));
 		String answer = inFromServer.readLine();
 	}
+
 	public static void DeletetRoom(String str) throws IOException{
 		outToServer = new DataOutputStream(Socket.getOutputStream());
 		outToServer.writeBytes("Room"+" "+"Out"+" "+str+'\n');
@@ -149,6 +167,7 @@ public class Client {
 		String answer = inFromServer.readLine();
 		return answer;
 	}
+
 	public static String getmean(int cate) throws IOException{
 		outToServer = new DataOutputStream(Socket.getOutputStream());
 		outToServer.writeBytes("word"+" "+"mean"+" "+cate+'\n');
